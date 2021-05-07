@@ -1,0 +1,17 @@
+[
+  {
+    "id": 4,
+    "id_questions": 2,
+    "resultat": "cool"
+  },
+  {
+    "id": 5,
+    "id_questions": 2,
+    "resultat": "pas cool"
+  },
+  {
+    "id": 6,
+    "id_questions": 2,
+    "resultat": "bof"
+  }
+]

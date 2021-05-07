@@ -1,0 +1,73 @@
+{% extends  layout %}
+{% block  content %}
+    <div class="container">
+        <h1>{{ enquete.titre }}</h1>
+        <h2>{{ enquete.description }}</h2>
+        <div class="row">
+            {% for question in questions %}
+                <div class="mx-auto col " >
+                    <h3>{{ question.titre }}</h3>
+                    {% if question.reponse.type !== "libre" %}
+                        <canvas id="{{ question.id }}" width="400" height="400"></canvas>
+                    {% else %}
+                        <ul class="list-group">
+                            {% for resultat in resultats %}
+                                {% if resultat.id_questions == question.id %}
+                                    <li class="list-group-item">{{ resultat.resultat }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <script>
+            {% set i = 0 %}
+            {% for question in questions %}
+            {% if question.reponse.type !== "libre" %}
+            let {{ "question"+i }} =
+            document.getElementById('{{ question.id }}').getContext('2d');
+            let {{ "myChart"+i }} =
+            new Chart({{ "question"+i }}, {
+                type: 'bar',
+                data: {
+                    labels: [{% for r in occurence[question.id] %}
+                        '{{ r.resultat }}',
+                        {% endfor %}],
+                    datasets: [{
+                        label: 'Nombre de réponse similaire',
+                        data: [{% for r in occurence[question.id] %}
+                            '{{ r.nb }}',
+                            {% endfor %}],
+                        backgroundColor:
+
+                            [{% for r in occurence[question.id] %}
+                                'rgba({{ range(0,255) | random }}, {{ range(0,255)| random }}, {{ range(0,255) | random }}, 0.2)',
+                                {% endfor %}],
+
+                        borderColor: [
+                            {% for r in occurence[question.id] %}
+                            'rgba({{ range(0,255) | random }}, {{ range(0,255)| random }}, {{ range(0,255) | random }}, 1)',
+                            {% endfor %}
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            {% set i = i+1 %}
+            {% endif %}
+            {% endfor %}
+        </script>
+    </div>
+{% endblock %}

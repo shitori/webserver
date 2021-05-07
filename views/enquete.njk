@@ -1,0 +1,160 @@
+{% extends  layout %}
+{% block  content %}
+    <div class="container">
+        <h1>{{ enq.titre }}</h1>
+        <h2>{{ enq.description }}</h2>
+        <form method="post" action="/enquetes/{{ enq.id }}/resultats">
+            {% for qst in qsts %}
+                <div class="form-group">
+                    <label for="{{ qst.id }}">{{ qst.titre }}</label>
+                    {% if qst.reponse.type == "number" %}
+                        <input type="number" class="form-control " id="{{ qst.id }}" name="{{ qst.id }}" required>
+                        {% elif qst.reponse.type == "text" %}
+                        <input type="text" class="form-control " id="{{ qst.id }}" name="{{ qst.id }}" required>
+                        {% elif qst.reponse.type == "choix" %}
+                        <select class="form-control " id="{{ qst.id }}" name="{{ qst.id }}" required>
+                            {% for choix in qst.reponse.choix %}
+                                <option>{{ choix }}</option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <textarea class="form-control " rows="3" id="{{ qst.id }}"
+                                  name="{{ qst.id }}" required></textarea>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p>Il n'y pas de questions dans cette enquetes.</p>
+            {% endfor %}
+            <button type="submit" class="btn btn-outline-success">Valider</button>
+        </form>
+        <hr>
+        <p>
+            <button class="btn btn-warning" type="button" data-toggle="collapse" data-target="#admin"
+                    aria-expanded="false" aria-controls="admin">
+                Administrateur ?
+            </button>
+        </p>
+        <div class="collapse" id="admin">
+            <div class="card card-body">
+                <div class="row">
+                    <div class="col">
+                        <h3>Modification de l'enquête: </h3>
+                        <form class="text-left" method="post" action="/enquetes/{{ enq.id }}?_method=PUT">
+                            <div class="form-group">
+                                <label for="titre">Titre</label>
+                                <input type="text" class="form-control" id="titre" name="titre" value="{{ enq.titre }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" id="description" rows="3"
+                                          name="description">{{ enq.description }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="secret">Mot de passe de confirmation</label>
+                                <input type="password" class="form-control" id="secret" name="secret">
+                            </div>
+                            <button type="submit" class="btn btn-outline-warning">Modifier</button>
+                        </form>
+                    </div>
+
+
+                    <div class="col">
+                        <h3>Ajout d'une question: </h3>
+                        <form class="text-left" method="post" action="/enquetes/{{ enq.id }}/question">
+                            <div class="form-group">
+                                <label for="titre">Titre de la question</label>
+                                <input type="text" class="form-control" id="titre" name="titre">
+                            </div>
+                            <div class="form-group">
+                                <label for="reponse">Type de réponses attendues</label>
+                                <select class="form-control" id="reponse" name="reponse">
+                                    <option value="number" selected>Nombre ou chiffre</option>
+                                    <option value="text">Phrase courte ou mot</option>
+                                    <option value="libre">Libre</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="secret">Mot de passe de confirmation</label>
+                                <input type="password" class="form-control" id="secret" name="secret">
+                            </div>
+                            <button type="submit" class="btn btn-outline-success">Ajouter à l'enquête</button>
+
+                        </form>
+                    </div>
+
+
+                    <div class="col">
+                        <h3>Suppression de l'enquête: </h3>
+                        <form class="text-left" method="post" action="/enquetes/{{ enq.id }}?_method=DELETE">
+                            <div class="form-group">
+                                <label for="secret">Mot de passe de confirmation</label>
+                                <input type="password" class="form-control" id="secret" name="secret">
+                            </div>
+                            <button type="submit" value="send" class="btn btn-outline-danger">
+                                Supprimer l'enquête
+                            </button>
+
+                        </form>
+                    </div>
+                </div>
+
+
+                {% for qst in qsts %}
+                    <hr>
+                    <h3>Question n°{{ qst.id }}:</h3>
+                    <div class="row">
+                        <div class="col">
+                            <h4>Modification</h4>
+                            <form class="text-left" method="post" action="/enquetes/{{ enq.id }}/question/{{ qst.id }}?_method=PUT">
+                                <div class="form-group">
+                                    <label for="titre">Titre</label>
+                                    <input type="text" class="form-control" id="titre" name="titre"
+                                           value="{{ qst.titre }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="reponse">Type de réponses attendues</label>
+                                    <select class="form-control" id="reponse" name="reponse">
+                                        {% if qst.reponse.type == "number" %}
+                                            <option value="number" selected>Nombre ou chiffre</option>
+                                            <option value="text">Phrase courte ou mot</option>
+                                            <option value="libre">Libre</option>
+                                            {% elif qst.reponse.type == "text" %}
+                                            <option value="number">Nombre ou chiffre</option>
+                                            <option value="text" selected>Phrase courte ou mot</option>
+                                            <option value="libre">Libre</option>
+                                            {% elif qst.reponse.type == "libre" %}
+                                            <option value="number">Nombre ou chiffre</option>
+                                            <option value="text">Phrase courte ou mot</option>
+                                            <option value="libre" selected>Libre</option>
+                                        {% else %}
+                                            <option value="number">Nombre ou chiffre</option>
+                                            <option value="text">Phrase courte ou mot</option>
+                                            <option value="libre">Libre</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="secret">Mot de passe de confirmation</label>
+                                    <input type="password" class="form-control" id="secret" name="secret">
+                                </div>
+                                <button type="submit" class="btn btn-outline-warning">Modifier</button>
+                            </form>
+                        </div>
+                        <div class="col">
+                            <h4>Suppression</h4>
+                            <form class="text-left" method="post" action="/enquetes/{{ enq.id }}/question/{{ qst.id }}?_method=DELETE">
+                                <div class="form-group">
+                                    <label for="secret">Mot de passe de confirmation</label>
+                                    <input type="password" class="form-control" id="secret" name="secret">
+                                </div>
+                                <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <p>Il n'y pas de questions dans cette enquetes.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

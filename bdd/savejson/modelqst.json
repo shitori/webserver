@@ -1,0 +1,30 @@
+[
+  {
+    "id": 0,
+    "id_enquetes": 0,
+    "titre": "quel age a tu ?",
+    "reponse": {
+      "type": "entier"
+    }
+  },
+  {
+    "id": 1,
+    "id_enquetes": 0,
+    "titre": "homme ou femme ?",
+    "reponse": {
+      "type": "choix",
+      "choix": [
+        "H",
+        "F"
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "id_enquetes": 1,
+    "titre": "Avis sur la france ?",
+    "reponse": {
+      "type": "libre"
+    }
+  }
+]
